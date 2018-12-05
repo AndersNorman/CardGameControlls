@@ -1,0 +1,62 @@
+2018-12-5 17:54:57 Created Textbox!
+2018-12-5 17:54:57 Created Textbox!
+2018-12-5 17:54:57 Created Textbox!
+2018-12-5 17:54:57 Created button!
+2018-12-5 17:54:58 ConnectPlayerIpPortNick was pressed!
+2018-12-5 17:54:58 Valid connection!
+2018-12-5 17:54:58 Nickname
+2018-12-5 17:54:58 Card height = 64
+2018-12-5 17:54:58 Card width = 89
+2018-12-5 17:54:58 Card with the id 0
+2018-12-5 17:54:58 Card with the id 1
+2018-12-5 17:54:58 Card with the id 2
+2018-12-5 17:54:58 Card with the id 3
+2018-12-5 17:54:58 Card with the id 4
+2018-12-5 17:54:58 Card with the id 5
+2018-12-5 17:54:58 Card with the id 6
+2018-12-5 17:54:58 Card with the id 7
+2018-12-5 17:54:58 Card with the id 8
+2018-12-5 17:54:58 Card with the id 9
+2018-12-5 17:54:58 Card with the id 10
+2018-12-5 17:54:58 Card with the id 11
+2018-12-5 17:54:58 Card with the id 12
+2018-12-5 17:54:58 Card with the id 13
+2018-12-5 17:54:58 Card with the id 14
+2018-12-5 17:54:58 Card with the id 15
+2018-12-5 17:54:58 Card with the id 16
+2018-12-5 17:54:58 Card with the id 17
+2018-12-5 17:54:58 Card with the id 18
+2018-12-5 17:54:58 Card with the id 19
+2018-12-5 17:54:58 Card with the id 20
+2018-12-5 17:54:58 Card with the id 21
+2018-12-5 17:54:58 Card with the id 22
+2018-12-5 17:54:58 Card with the id 23
+2018-12-5 17:54:58 Card with the id 24
+2018-12-5 17:54:58 Card with the id 25
+2018-12-5 17:54:58 Card with the id 26
+2018-12-5 17:54:58 Card with the id 27
+2018-12-5 17:54:58 Card with the id 28
+2018-12-5 17:54:58 Card with the id 29
+2018-12-5 17:54:58 Card with the id 30
+2018-12-5 17:54:58 Card with the id 31
+2018-12-5 17:54:58 Card with the id 32
+2018-12-5 17:54:58 Card with the id 33
+2018-12-5 17:54:58 Card with the id 34
+2018-12-5 17:54:58 Card with the id 35
+2018-12-5 17:54:58 Card with the id 36
+2018-12-5 17:54:58 Card with the id 37
+2018-12-5 17:54:58 Card with the id 38
+2018-12-5 17:54:58 Card with the id 39
+2018-12-5 17:54:58 Card with the id 40
+2018-12-5 17:54:58 Card with the id 41
+2018-12-5 17:54:58 Card with the id 42
+2018-12-5 17:54:58 Card with the id 43
+2018-12-5 17:54:58 Card with the id 44
+2018-12-5 17:54:58 Card with the id 45
+2018-12-5 17:54:58 Card with the id 46
+2018-12-5 17:54:58 Card with the id 47
+2018-12-5 17:54:58 Card with the id 48
+2018-12-5 17:54:58 Card with the id 49
+2018-12-5 17:54:58 Card with the id 50
+2018-12-5 17:54:58 Card with the id 51
+2018-12-5 17:54:58 Client id is == 6

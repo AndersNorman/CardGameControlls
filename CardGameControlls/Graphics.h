@@ -9,6 +9,8 @@
 #include "string"
 #include "Dwrite.h"
 #include "wchar.h"
+#include "mutex"
+#include "thread"
 class Grafik
 {
 	ID2D1Factory* factory;
@@ -18,7 +20,8 @@ public:
 	~Grafik();
 
 	bool Init(HWND windowHandle);
-
+	int GetTicks();
+	void TimeLoop();
 	void BeginDraw() { renderTarget->BeginDraw(); }
 	void EndDraw() { renderTarget->EndDraw(); }
 	ID2D1RenderTarget* GetRenderTarget() {
@@ -28,6 +31,6 @@ public:
 	void ClearScreen(float r, float g, float b);
 	void DrawCircle(float x, float y, float radius, float r, float g, float b, float a);
 	void DrawBox(float x, float y, float x2, float y2, float r, float g, float b, float a);
-	void DrawTexts(std::string message, int x, int y, int green, int blue, int red);
+	void DrawTexts(std::string message, int x, int y, float green, float blue, float red,float fontsize);
 
 };

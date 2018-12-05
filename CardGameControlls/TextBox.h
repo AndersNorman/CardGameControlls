@@ -20,9 +20,11 @@ public:
 	int r;
 	int g;
 	int b;
+	bool thisdown;
 	bool focused;
-
-	TextBox(Grafik* thegrafik, int thex, int they, int thewidth, int theheight, int red, int green, int blue);
+	std::string inputtextbox;
+	TextBox(Grafik* thegrafik, int thex, int they, int thewidth, int theheight, int red, int green, int blue,std::string starttext);
+	std::string ReadKeyboard();
 	void Update();
-	void DrawTextBox();
+	void DrawTextBox(float x, float y, float width, float height);
 };
