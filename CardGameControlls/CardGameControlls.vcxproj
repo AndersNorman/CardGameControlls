@@ -277,6 +277,7 @@
     <Image Include="card\card_back.png">
       <DeploymentContent>true</DeploymentContent>
     </Image>
+    <Image Include="card\cursor.png" />
     <Image Include="card\jack_of_clubs.png">
       <DeploymentContent>true</DeploymentContent>
     </Image>

@@ -286,6 +286,9 @@
     <Image Include="card\red_joker.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="card\cursor.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Text Include="card\cards.txt">

@@ -12,5 +12,6 @@ public:
 	int y;
 	int factrealy;
 	void Update();
-
+	float titlebar;
+	float framewidth;
 };

@@ -41,7 +41,7 @@ bool Grafik::Init(HWND windowHandle) {
 	}
 	RECT rect;
 	GetClientRect(windowHandle, &rect);
-	factory->CreateHwndRenderTarget(D2D1::RenderTargetProperties(), D2D1::HwndRenderTargetProperties(windowHandle, D2D1::SizeU(rect.right, rect.bottom)),
+	factory->CreateHwndRenderTarget(D2D1::RenderTargetProperties(), D2D1::HwndRenderTargetProperties(windowHandle, D2D1::SizeU(1920, 1080)),
 		&renderTarget);
 
 	res = DWriteCreateFactory(

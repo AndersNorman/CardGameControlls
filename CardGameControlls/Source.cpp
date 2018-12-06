@@ -46,6 +46,10 @@ std::list<MousePointers*> mousepointers = std::list<MousePointers*>();
 Card* currentselectedcard = nullptr;
 bool istrueman = false;
 std::list<Commands> tosend = std::list<Commands>();
+int writemessage = -1;
+Mouse* musen = nullptr;
+int cursorwidth = 16;
+int cursorheight = 20;
 
 /*
 
@@ -54,6 +58,10 @@ Im always abit slow. JK :)
 
 */
 
+void ClientResize(HWND hWnd, int nWidth, int nHeight)
+{
+
+}
 
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, _In_ WPARAM wParam, _In_ LPARAM lParam) {
@@ -71,7 +79,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, _In_ WPARAM wParam, _In_ LPARA
 	controller->TransferMessage(hwnd, uMsg, wParam, lParam);
 	
 
-	if (uMsg == WM_CHAR) {
+	if (uMsg == WM_CHAR && writemessage == -1) {
 		std::string s(1, char(wParam));
 		if (s == "F" || s == "f") {
 			thelock.lock();
@@ -90,6 +98,9 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, _In_ WPARAM wParam, _In_ LPARA
 
 		}
 
+		controller->Log("Title bar is = " + std::to_string(musen->titlebar));
+		controller->Log("Width bar is = " + std::to_string(musen->framewidth));
+
 		if (s == "A" || s == "a") {
 
 			CardControllSource->AllMode();
@@ -100,6 +111,62 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, _In_ WPARAM wParam, _In_ LPARA
 			CardControllSource->CenterMode();
 
 		}
+
+	}
+
+
+
+
+
+	
+	
+	
+	if (uMsg == WM_KEYDOWN) {
+
+		
+
+		if (wParam == VK_RETURN) {
+
+			if (gamemode == 2) {
+
+				if (writemessage != -1) {
+					TextBox* themessagebox = controller->GetTextBox(writemessage);
+
+
+					std::string theinputmessage = themessagebox->inputtextbox;
+					if (theinputmessage.find(";") == std::string::npos && theinputmessage.find(":") == std::string::npos) {
+
+						Commands newcommand;
+						newcommand.command = "SENDMESSAGE";
+						newcommand.variables = std::list<std::string>();
+						newcommand.variables.push_back(theinputmessage);
+						thelock.lock();
+
+						tosend.push_back(newcommand);
+
+						thelock.unlock();
+						
+
+
+					}
+					controller->RemoveBox(writemessage);
+					writemessage = -1;
+
+				}
+
+				else {
+
+					writemessage = controller->CreateTextBox(50, 50, 250, 50, 255, 255, 255, "");
+					TextBox* theit = controller->GetTextBox(writemessage);
+					theit->focused = true;
+
+				}
+
+			}
+
+
+		}
+
 	}
 
 	
@@ -109,6 +176,16 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, _In_ WPARAM wParam, _In_ LPARA
 	if (uMsg == 1050) {
 
 	}
+
+	if (uMsg == WM_SIZING) {
+
+		
+
+
+	}
+
+
+	
 
 
 	/*
@@ -158,6 +235,18 @@ void refreshme() {
 			tosend = std::list<Commands>();
 			tosend.push_front(updatemouselist);
 			tosend.push_front(updatelist);
+			Commands updatemousetoserver;
+			updatemousetoserver.command = "MOUSEUPDATESERVER";
+			updatemousetoserver.variables = std::list<std::string>();
+
+			if (musen != nullptr) {
+
+				updatemousetoserver.variables.push_back(std::to_string(musen->x));
+				updatemousetoserver.variables.push_back(std::to_string(musen->y));
+				tosend.push_back(updatemousetoserver);
+
+			}
+
 			std::list<Card*> allcardupdatecheck = CardControllSource->getlist();
 
 			thelock.unlock();
@@ -178,7 +267,7 @@ void refreshme() {
 					thecommandtomake.variables.push_back(std::to_string(ix->xcord));
 					thecommandtomake.variables.push_back(std::to_string(ix->ycord));
 					thecommandtomake.variables.push_back(std::to_string(ix->flipped));
-					tosend.push_back(thecommandtomake);
+					toupdateis.push_back(thecommandtomake);
 
 
 					thelock.unlock();
@@ -189,7 +278,7 @@ void refreshme() {
 			}
 
 			
-			std::list<Commands> itreturned = NetWorkConnectionSource->RegularUpdate(tosend);
+			std::list<Commands> itreturned = NetWorkConnectionSource->RegularUpdate(toupdateis);
 
 			std::list<Card*> newversion = std::list<Card*>();
 			for (Commands x : itreturned) {
@@ -284,6 +373,8 @@ void refreshme() {
 			if (newversion.size() > 0) {
 				CardControllSource->SetList(newversion);
 			}
+
+
 		}
 		catch (int e) {
 			NetWorkConnectionSource->CloseConnection();
@@ -308,12 +399,13 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE prevInstance, LPWSTR cmd, int
 	windowclass.lpfnWndProc = WindowProc;
 	windowclass.lpszClassName = L"MainWindow";
 	windowclass.style = CS_HREDRAW | CS_VREDRAW;
-
+	
 	RegisterClassEx(&windowclass);
 	RECT rect = { 0,0,1920,1080 };
 	AdjustWindowRect(&rect, WS_TILEDWINDOW, FALSE);
 	DWORD saken = DWORD("MainWindow");
-	HWND windowhandle = CreateWindowExW(NULL, L"MainWindow", L"Spel", WS_OVERLAPPEDWINDOW, 10, 10, rect.right - rect.left, rect.bottom - rect.top, NULL, NULL, hInstance, NULL);
+	HWND windowhandle = CreateWindowExW(NULL, L"MainWindow", L"Spel", WS_OVERLAPPEDWINDOW, 0, 0, rect.right - rect.left, rect.bottom - rect.top, NULL, NULL, hInstance, NULL);
+	ShowCursor(false);
 	if (!windowhandle) return -1;
 
 	Grafik* graphics = new Grafik();
@@ -348,11 +440,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE prevInstance, LPWSTR cmd, int
 	controller->SetWindowHandle(&windowhandle);	
 	int cardwidth = 0;
 	int cardheight = 0;
-	Mouse* musen;
+
 	musen = controller->ReturnMouse();
 	std::string theflippedtexture = "card/card_back.png";
+	std::string mousetexture = "card/cursor.png";
 	SpriteSheet* flippedspritesheet = new SpriteSheet(std::wstring(theflippedtexture.begin(), theflippedtexture.end()).c_str(), graphics);
-
+	SpriteSheet* Pointer = new SpriteSheet(std::wstring(mousetexture.begin(), mousetexture.end()).c_str(), graphics);
 	while (message.message != WM_QUIT) {
 		
 		if (PeekMessage(&message, NULL, 0, 0, PM_REMOVE)) {
@@ -364,6 +457,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE prevInstance, LPWSTR cmd, int
 
 			graphics->ClearScreen(0, 0, 0);
 			if (gamemode == 0) {
+				graphics->DrawTexts("X = " + std::to_string(musen->x),0,0,255,0,0,24);
+				graphics->DrawTexts("Y = " + std::to_string(musen->y),0,50,255,0,0,24);
+
 				TranslateMessage(&message);
 				DispatchMessage(&message);
 				int theheight = 50;
@@ -390,10 +486,11 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE prevInstance, LPWSTR cmd, int
 				std::list<MousePointers*> mouses = mousepointers;
 				std::list<Card*> thecards = CardControllSource->getlist();
 				thelock.unlock();
-				//for (MousePointers* ix : mouses) {
-				//	graphics->DrawCircle(ix->mousex, ix->mousey, 3, 0, 255, 0, 255);
+				for (MousePointers* ix : mouses) {
+					Pointer->Draw(ix->mousex, ix->mousey, ix->mousex + cursorwidth, ix->mousey + cursorheight, 1);
 
-				//}
+				}
+				graphics->DrawCircle(musen->factrealx, musen->factrealy, 2, 0, 255, 0, 1);
 				
 				
 				for (Card* thecard : thecards) {
@@ -423,14 +520,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE prevInstance, LPWSTR cmd, int
 				}
 				
 
-				if (CardControllSource->allmodeis == 1) {
-					graphics->DrawTexts("Multiple select on", 20, 20, 255, 255, 255, 24);
-				}
-				
-				if(CardControllSource->allmodeis == 0){
-					graphics->DrawTexts("Single select on", 20, 20, 255, 255, 255, 24);
+			
 
-				}
+
+			
 
 			}
 			if (gamemode == 1) {
@@ -494,8 +587,23 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE prevInstance, LPWSTR cmd, int
 			}
 			
 
+			graphics->DrawTexts("X = " + std::to_string(musen->x), 0, 0, 255, 0, 0, 24);
+			graphics->DrawTexts("Y = " + std::to_string(musen->y), 0, 50, 255, 0, 0, 24);
+			if (CardControllSource->allmodeis == 1) {
+				graphics->DrawTexts("Multiple select on", 0, 100, 255, 255, 255, 24);
+			}
+
+			if (CardControllSource->allmodeis == 0) {
+				graphics->DrawTexts("Single select on", 0, 100, 255, 255, 255, 24);
+
+			}
+
+
 
 			controller->Update();
+
+
+			Pointer->Draw(musen->x, musen->y, musen->x + cursorwidth, musen->y + cursorheight, 1);
 
 			graphics->EndDraw();
 
