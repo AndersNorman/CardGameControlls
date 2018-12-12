@@ -3,11 +3,14 @@
 #include "Graphics.h"
 
 class SpriteSheet {
+public:
+
 	Grafik* gfx;
 	ID2D1Bitmap* bmp;
 
-public:
 	SpriteSheet(LPCWSTR filename, Grafik* gfx);
+
+
 
 	~SpriteSheet();
 

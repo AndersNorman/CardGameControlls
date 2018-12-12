@@ -21,6 +21,7 @@
 #include "Mouse.h"
 #include "Commands.h"
 #include "MousePointers.h";
+#include "Wingdi.h";
 
 
 
@@ -36,7 +37,7 @@ std::list<int> boxes = std::list<int>();
 bool tocloseornot = false;
 std::mutex thelock;
 std::mutex ShutDown;
-
+int currentticks = 0;
 KBDLLHOOKSTRUCT kbdStruct;
 HHOOK _hook;
 Connections* NetWorkConnectionSource;
@@ -50,7 +51,8 @@ int writemessage = -1;
 Mouse* musen = nullptr;
 int cursorwidth = 16;
 int cursorheight = 20;
-
+int framespersecond = 0;
+int msdelay;
 /*
 
 The reason im doing this very slowly is cause of low motivation!
@@ -277,9 +279,13 @@ void refreshme() {
 
 			}
 
-			
+			auto start = std::chrono::high_resolution_clock::now();
 			std::list<Commands> itreturned = NetWorkConnectionSource->RegularUpdate(toupdateis);
-
+			auto finish = std::chrono::high_resolution_clock::now();
+			double time = std::chrono::duration_cast<std::chrono::milliseconds>(finish - start).count();
+			thelock.lock();
+			msdelay = time;
+			thelock.unlock();
 			std::list<Card*> newversion = std::list<Card*>();
 			for (Commands x : itreturned) {
 				int cardid;
@@ -440,12 +446,14 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE prevInstance, LPWSTR cmd, int
 	controller->SetWindowHandle(&windowhandle);	
 	int cardwidth = 0;
 	int cardheight = 0;
+	std::clock_t starttimer = std::clock();
 
 	musen = controller->ReturnMouse();
 	std::string theflippedtexture = "card/card_back.png";
 	std::string mousetexture = "card/cursor.png";
 	SpriteSheet* flippedspritesheet = new SpriteSheet(std::wstring(theflippedtexture.begin(), theflippedtexture.end()).c_str(), graphics);
 	SpriteSheet* Pointer = new SpriteSheet(std::wstring(mousetexture.begin(), mousetexture.end()).c_str(), graphics);
+
 	while (message.message != WM_QUIT) {
 		
 		if (PeekMessage(&message, NULL, 0, 0, PM_REMOVE)) {
@@ -486,10 +494,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE prevInstance, LPWSTR cmd, int
 				std::list<MousePointers*> mouses = mousepointers;
 				std::list<Card*> thecards = CardControllSource->getlist();
 				thelock.unlock();
-				for (MousePointers* ix : mouses) {
-					Pointer->Draw(ix->mousex, ix->mousey, ix->mousex + cursorwidth, ix->mousey + cursorheight, 1);
-
-				}
+				
 				graphics->DrawCircle(musen->factrealx, musen->factrealy, 2, 0, 255, 0, 1);
 				
 				
@@ -523,7 +528,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE prevInstance, LPWSTR cmd, int
 			
 
 
-			
+				for (MousePointers* ix : mouses) {
+					Pointer->Draw(ix->mousex, ix->mousey, ix->mousex + cursorwidth, ix->mousey + cursorheight, 1);
+
+				}
 
 			}
 			if (gamemode == 1) {
@@ -589,14 +597,19 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE prevInstance, LPWSTR cmd, int
 
 			graphics->DrawTexts("X = " + std::to_string(musen->x), 0, 0, 255, 0, 0, 24);
 			graphics->DrawTexts("Y = " + std::to_string(musen->y), 0, 50, 255, 0, 0, 24);
+			graphics->DrawTexts("Fps = " + std::to_string(framespersecond), 0, 100, 255, 0, 0, 24);
+			thelock.lock();
+			graphics->DrawTexts("Ms = " + std::to_string(msdelay), 0, 150, 255, 0, 0, 24);
+			thelock.unlock();
 			if (CardControllSource->allmodeis == 1) {
-				graphics->DrawTexts("Multiple select on", 0, 100, 255, 255, 255, 24);
+				graphics->DrawTexts("Multiple select on", 0, 200, 255, 255, 255, 24);
 			}
 
 			if (CardControllSource->allmodeis == 0) {
-				graphics->DrawTexts("Single select on", 0, 100, 255, 255, 255, 24);
+				graphics->DrawTexts("Single select on", 0, 200, 255, 255, 255, 24);
 
 			}
+
 
 
 
@@ -604,6 +617,19 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE prevInstance, LPWSTR cmd, int
 
 
 			Pointer->Draw(musen->x, musen->y, musen->x + cursorwidth, musen->y + cursorheight, 1);
+
+			double duration = (std::clock() - starttimer) / (double)CLOCKS_PER_SEC;
+
+			if (duration >= 1) {
+
+
+				starttimer = std::clock();
+				framespersecond = currentticks;
+				currentticks = 0;
+			}
+			else {
+				currentticks = currentticks + 1;
+			}
 
 			graphics->EndDraw();
 

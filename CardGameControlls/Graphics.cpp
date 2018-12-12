@@ -2,22 +2,10 @@
 
 IDWriteFactory* pDWriteFactory = NULL;
 std::mutex mtx;
-int allticks = 0;
 int ithinkdoit = 0;
 HRESULT res;
 
-void TimeLoop() {
-	
-		mtx.lock();
-		allticks = allticks + 1;
 
-		mtx.unlock();
-		Sleep(10);
-		TimeLoop();
-	
-}
-
-std::thread* nytttrad = new std::thread(TimeLoop);
 
 
 
@@ -31,7 +19,6 @@ Grafik::Grafik() {
 Grafik::~Grafik() {
 	if (factory) factory->Release();
 	if (renderTarget) renderTarget->Release();
-	if (nytttrad) nytttrad->detach();
 }
 
 bool Grafik::Init(HWND windowHandle) {
@@ -58,10 +45,8 @@ bool Grafik::Init(HWND windowHandle) {
 
 
 int Grafik::GetTicks() {
-	mtx.lock();
-	int toreturn = allticks;
-	mtx.unlock();
-	return toreturn;
+
+	return 0;
 }
 
 void Grafik::ClearScreen(float r, float g, float b) {

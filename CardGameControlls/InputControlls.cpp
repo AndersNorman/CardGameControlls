@@ -263,7 +263,7 @@ void InputControlls::UpdateFocus() {
 		for (std::list<ControllButton*>::iterator it = buttones.begin(); it != buttones.end();it++) {
 			ControllButton* theit = *it;
 			if (mouse.x > theit->x && mouse.x < theit->x + theit->width) {
-				if (mouse.y > realy(theit->y) && mouse.y < theit->y + theit->height) {
+				if (mouse.y > theit->y && mouse.y < theit->y + theit->height) {
 					this->ButtonPressed(theit->boxid);
 				}
 			}
